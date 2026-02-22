@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "MetaExchange.Console": {
+      "commandName": "Project",
+      "workingDirectory": "..\\..",
+      "commandLineArgs": ".\\data\\venues"
+    }
+  }
+}

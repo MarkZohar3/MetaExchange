@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: MetaExchange.Console Debug (CLI parity)",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/MetaExchange.Console/MetaExchange.Console.csproj",
+        },
+        {
+            "name": "C#: MetaExchange.Console Debug (Prompt args)",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/MetaExchange.Console/MetaExchange.Console.csproj",
+        }
+    ],
+    "inputs": [
+        {
+            "id": "orderBookPath",
+            "type": "promptString",
+            "description": "Path to order book file",
+            "default": ".\\data\\venues"
+        }
+    ]
+}
