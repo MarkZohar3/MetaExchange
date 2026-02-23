@@ -23,14 +23,12 @@ Every file is considered as a separate venue.
 
 ```powershell
 # from the repo root
-cd src/MetaExchange.Console
 dotnet run --project MetaExchange.Console.csproj -- <venuesDir> [requestedBtc] [side]
 ```
 
 Example:
 
 ```powershell
-cd d:\Documents\Projects\MetaExchange
 dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
 ```
 
@@ -60,11 +58,12 @@ The API is located in `src/MetaExchange.Api` and listens on port **8080** by def
 ```powershell
 cd src/MetaExchange.Api
 # configure environment variable or appsettings to point at your venues directory
-$env:VenuesDirectory = "D:\\Documents\\Projects\\MetaExchange\\data\\venues"
+# use relative path to test-data at repo root
+$env:VenuesDirectory = "..\\..\\test-data\\venues"
 dotnet run
 ```
 
-Then browse to [https://localhost:5001/swagger](https://localhost:5001/swagger) (or http://localhost:5000) to exercise the endpoint.
+Then browse to the Swagger UI using the host/port shown in the console output
 
 #### POST /best-execution/plan
 
@@ -103,8 +102,14 @@ A `docker-compose.yml` is provided to build and run both components with the sam
 # build images
 docker-compose build
 
-# start services
+# start all services
 docker-compose up
+
+#start api
+docker compose up -d api 
+
+#start console
+docker compose run --rm console
 ```
 
-The API will be available on `http://localhost:8080` and Swagger UI at `http://localhost:8080/swagger` when the environment variable `ASPNETCORE_ENVIRONMENT` is `Development`.
+The API will be available on `http://localhost:8080` and Swagger UI at `http://localhost:8080/swagger`.
