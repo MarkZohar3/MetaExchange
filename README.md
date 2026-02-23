@@ -1,20 +1,7 @@
 # MetaExchange
 
-This repository contains a small **meta-exchange** proof‑of‑concept implemented in .NET 10.0.  It was created for an interview / coding task and demonstrates:
+This repository contains a small **meta-exchange** proof‑of‑concept implemented in .NET 10.0. 
 
-* **Part 1 – Best execution algorithm** – given a set of order books coming from multiple venues, a requested buy or sell amount of BTC and per‑venue balances, compute a list of child orders that achieves the best price for the user while respecting each venue's EUR/BTC balance constraints.  Buyer orders consume EUR and pick cheapest asks; seller orders consume BTC and pick highest bids.
-* **Part 2 – Web service** – the same planner is exposed as an HTTP API using a minimal ASP.NET Core (Kestrel) service with Swagger/OpenAPI.
-
-The solution is split into three projects:
-
-* `MetaExchange.Domain` – simple domain types (`OrderBookSnapshot`, `PriceLevel`, `OrderSide`, etc.).
-* `MetaExchange.Application` – core logic: market‑data ingestion, the best‑execution planner and a service wrapper used by both console and API.
-* `MetaExchange.Api` – ASP.NET Core application exposing `/best-execution/plan`.
-* `MetaExchange.Console` – command‑line frontend for quick experimentation.
-
-A small xUnit test project (`MetaExchange.Application.Tests`) validates the planner behaviour.
-
----
 
 ## Prerequisites
 
@@ -23,13 +10,14 @@ A small xUnit test project (`MetaExchange.Application.Tests`) validates the plan
 
 ## Data format
 
-Order‑book snapshots are expected as JSON lines; each line is deserialized into `OrderBookSnapshotDto`.  The `data/venues` directory contains sample files used by the console app and the API when run with the default configuration.
+The `data/venues` directory contains sample files used by the console app and the API when run with the default configuration.
 
 A single snapshot looks like the examples included in the `data` folder.
 
 ## Console application
 
 The console application is a simple entry point that reads the order books from a directory and prints a plan to stdout.
+Every file is considered as a separate venue.
 
 ### Build & run
 
@@ -106,15 +94,6 @@ Response:
 
 The API interprets `side` case‑insensitively; only `Buy` or `Sell` are allowed.
 
-## Tests
-
-The unit tests live under `tests/MetaExchange.Application.Tests`.  To execute them:
-
-```powershell
-dotnet test tests/MetaExchange.Application.Tests/MetaExchange.Application.Tests.csproj
-```
-
-The test suite covers the planner; extend it if you add new business logic.
 
 ## Docker
 
@@ -129,24 +108,3 @@ docker-compose up
 ```
 
 The API will be available on `http://localhost:8080` and Swagger UI at `http://localhost:8080/swagger` when the environment variable `ASPNETCORE_ENVIRONMENT` is `Development`.
-
-You can also run just the console image to verify the algorithm in a container:
-
-```bash
-docker run --rm -v $(pwd)/data:/data:ro metaexchange_console /data/venues 1.5 Sell
-```
-
-(or adjust the image name/tag as output by `docker-compose build`).
-
-## Project structure overview
-
-```
-MetaExchange.sln
-├── src/
-│   ├── MetaExchange.Api/        # web service
-│   ├── MetaExchange.Application/ # business logic & market data
-│   ├── MetaExchange.Console/     # CLI helper
-│   └── MetaExchange.Domain/      # shared domain types
-└── tests/
-    └── MetaExchange.Application.Tests/ # xUnit tests
-```
