@@ -10,7 +10,7 @@ public class BestExecutionServiceTests
     [Fact]
     public void Plan_AggregatesCorrectly()
     {
-        // arrange: build two snapshots in memory and call the planner directly
+        // Arrange
         var book1 = new OrderBookSnapshot(
             UnixTimeSeconds: 0m,
             AcqTime: DateTime.UtcNow,
@@ -32,10 +32,10 @@ public class BestExecutionServiceTests
 
         IBestExecutionService service = new BestExecutionService();
 
-        // act - we built bids above, so sell side will consume them
+        // Act
         var plan = service.Plan(OrderSide.Sell, 1.5m, venues);
 
-        // assert
+        // Assert
         Assert.Equal(OrderSide.Sell, plan.Side);
         Assert.Equal(1.5m, plan.RequestedBtc);
         Assert.Equal(1.5m, plan.FilledBtc);
