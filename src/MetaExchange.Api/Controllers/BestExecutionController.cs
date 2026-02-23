@@ -3,6 +3,7 @@ using MetaExchange.Api.DTOs;
 using MetaExchange.Api.Mapping;
 using MetaExchange.Application.BestExecution;
 using MetaExchange.Domain.Orders;
+using Microsoft.AspNetCore.Http.HttpResults;
 namespace MetaExchange.Api.Controllers;
 
 [ApiController]
@@ -20,6 +21,9 @@ public sealed class BestExecutionController : ControllerBase
     }
 
     [HttpPost("plan")]
+    [ProducesResponseType(typeof(BestExecutionResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public ActionResult<BestExecutionResponseDto> Plan([FromBody] BestExecutionRequestDto req)
     {
         if (req.RequestedBtc <= 0m)
