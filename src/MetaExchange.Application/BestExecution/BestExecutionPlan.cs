@@ -1,3 +1,5 @@
+using MetaExchange.Domain.Orders;
+
 namespace MetaExchange.Application.BestExecution;
 
 public sealed record BestExecutionPlan(
