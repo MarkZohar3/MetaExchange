@@ -57,9 +57,8 @@ The API is located in `src/MetaExchange.Api` and listens on port **8080** by def
 
 ```powershell
 cd src/MetaExchange.Api
-# configure environment variable or appsettings to point at your venues directory
-# use relative path to test-data at repo root
-$env:VenuesDirectory = "..\\..\\test-data\\venues"
+# configure environment variable point at your venues directory
+$env:VenuesDirectory = "..\\..\\data\\venues"
 dotnet run
 ```
 
@@ -108,8 +107,11 @@ docker-compose up
 #start api
 docker compose up -d api 
 
-#start console
+#start console with default parameters
 docker compose run --rm console
+
+#start console with custom parameters (example)
+docker compose run --rm console /data/venues 0.5 Buy
 ```
 
 The API will be available on `http://localhost:8080` and Swagger UI at `http://localhost:8080/swagger`.
