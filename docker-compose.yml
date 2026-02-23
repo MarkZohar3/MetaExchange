@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/MetaExchange.Api/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      VenuesDirectory: "/data/venues"
+    volumes:
+      - ./data:/data:ro
+    restart: unless-stopped
+
+  console:
+    build:
+      context: .
+      dockerfile: src/MetaExchange.Console/Dockerfile
+    volumes:
+      - ./data:/data:ro
+    command: ["/data/venues"]
