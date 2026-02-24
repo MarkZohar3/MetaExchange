@@ -1,5 +1,5 @@
 using MetaExchange.Api.DTOs;
-using MetaExchange.Application.BestExecution;
+using MetaExchange.Domain.BestExecution;
 using MetaExchange.Domain.Orders;
 
 namespace MetaExchange.Api.Mapping;

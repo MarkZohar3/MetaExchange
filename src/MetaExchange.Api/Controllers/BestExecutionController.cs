@@ -4,6 +4,7 @@ using MetaExchange.Api.Mapping;
 using MetaExchange.Application.BestExecution;
 using MetaExchange.Domain.Orders;
 using Microsoft.AspNetCore.Http.HttpResults;
+using MetaExchange.Domain.BestExecution;
 namespace MetaExchange.Api.Controllers;
 
 [ApiController]
