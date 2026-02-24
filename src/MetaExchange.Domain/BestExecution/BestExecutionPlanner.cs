@@ -1,6 +1,7 @@
 using MetaExchange.Domain.Orders;
+using MetaExchange.Domain.Venues;
 
-namespace MetaExchange.Application.BestExecution;
+namespace MetaExchange.Domain.BestExecution;
 
 public static class BestExecutionPlanner
 {
@@ -9,9 +10,18 @@ public static class BestExecutionPlanner
         decimal requestedBtc,
         IReadOnlyList<VenueSnapshot> venues)
     {
-        if (requestedBtc <= 0m || venues.Count == 0)
+        ArgumentNullException.ThrowIfNull(venues);
+        if (requestedBtc < 0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(requestedBtc), "requestedBtc must be non-negative");
+        }
+        if (venues.Count == 0 || requestedBtc == 0m)
         {
             return new BestExecutionPlan(side, requestedBtc, 0m, 0m, Array.Empty<ChildOrder>());
+        }
+        if (venues.Any(v => v is null))
+        {
+            throw new ArgumentException("venues list must not contain null", nameof(venues));
         }
 
         // Build global candidate list (one candidate per price level per venue)
@@ -80,10 +90,10 @@ public static class BestExecutionPlanner
 
 
                 orders.Add(new ChildOrder(
-                    VenueId: candidate.VenueId,
-                    Side: OrderSide.Buy,
-                    QuantityBtc: fillBtc,
-                    LimitPriceEurPerBtc: price));
+                    venueId: candidate.VenueId,
+                    side: OrderSide.Buy,
+                    quantityBtc: fillBtc,
+                    limitPriceEurPerBtc: price));
 
                 var costEur = fillBtc * price;
                 eurByVenue[candidate.VenueId] = eur - costEur;
@@ -104,10 +114,10 @@ public static class BestExecutionPlanner
                 }
 
                 orders.Add(new ChildOrder(
-                    VenueId: candidate.VenueId,
-                    Side: OrderSide.Sell,
-                    QuantityBtc: fillBtc,
-                    LimitPriceEurPerBtc: price));
+                    venueId: candidate.VenueId,
+                    side: OrderSide.Sell,
+                    quantityBtc: fillBtc,
+                    limitPriceEurPerBtc: price));
 
                 btcByVenue[candidate.VenueId] = btc - fillBtc;
 
@@ -120,11 +130,11 @@ public static class BestExecutionPlanner
         var filled = requestedBtc - remaining;
 
         return new BestExecutionPlan(
-            Side: side,
-            RequestedBtc: requestedBtc,
-            FilledBtc: filled,
-            TotalEur: totalEur,
-            Orders: orders);
+            side: side,
+            requestedBtc: requestedBtc,
+            filledBtc: filled,
+            totalEur: totalEur,
+            orders: orders);
     }
 
 

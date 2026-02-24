@@ -1,4 +1,5 @@
 using MetaExchange.Application.BestExecution;
+using MetaExchange.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddSwaggerGen();
 
 // application services
 builder.Services.AddTransient<IBestExecutionService, BestExecutionService>();
+
+// configuration
+builder.Services.Configure<VenuesOptions>(builder.Configuration);
 
 var app = builder.Build();
 

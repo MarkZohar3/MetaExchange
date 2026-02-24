@@ -1,5 +1,7 @@
 using MetaExchange.Application.MarketData.Ingestion;
+using MetaExchange.Domain.BestExecution;
 using MetaExchange.Domain.Orders;
+using MetaExchange.Domain.Venues;
 
 namespace MetaExchange.Application.BestExecution;
 
@@ -32,12 +34,11 @@ public sealed class BestExecutionService : IBestExecutionService
             {
                 continue;
             }
-                
 
             snapshots.Add(new VenueSnapshot(
-                VenueId: id,
-                Book: book,
-                Balances: new VenueBalances(DefaultEur, DefaultBtc)));
+                venueId: id,
+                book: book,
+                balances: new VenueBalances(DefaultEur, DefaultBtc)));
         }
 
         return Plan(side, requestedBtc, snapshots);

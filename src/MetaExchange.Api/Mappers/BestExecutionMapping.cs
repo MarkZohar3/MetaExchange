@@ -1,10 +1,10 @@
 using MetaExchange.Api.DTOs;
-using MetaExchange.Application.BestExecution;
+using MetaExchange.Domain.BestExecution;
 using MetaExchange.Domain.Orders;
 
 namespace MetaExchange.Api.Mapping;
 
-public static class BestExecutionMapping
+public static class BestExecutionMapper
 {
     // outgoing
     public static BestExecutionResponseDto ToDto(this BestExecutionPlan plan)
