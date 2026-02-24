@@ -4,7 +4,7 @@ using MetaExchange.Domain.Orders;
 
 namespace MetaExchange.Api.Mapping;
 
-public static class BestExecutionMapping
+public static class BestExecutionMapper
 {
     // outgoing
     public static BestExecutionResponseDto ToDto(this BestExecutionPlan plan)

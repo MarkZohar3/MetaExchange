@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using MetaExchange.Api.DTOs;
 using MetaExchange.Api.Mapping;
 using MetaExchange.Application.BestExecution;
+using MetaExchange.Application;
 using MetaExchange.Domain.Orders;
 using Microsoft.AspNetCore.Http.HttpResults;
 using MetaExchange.Domain.BestExecution;
+using Microsoft.Extensions.Options;
+
 namespace MetaExchange.Api.Controllers;
 
 [ApiController]
@@ -14,10 +17,12 @@ public sealed class BestExecutionController : ControllerBase
     private readonly IBestExecutionService _service;
     private readonly string _venuesDir;
 
-    public BestExecutionController(IBestExecutionService service, IConfiguration config)
+    public BestExecutionController(IBestExecutionService service, IOptions<VenuesOptions> options)
     {
         _service = service;
-        _venuesDir = config.GetValue<string>("VenuesDirectory")
+
+        var venuesDir = options?.Value?.VenuesDirectory;
+        _venuesDir = venuesDir
             ?? throw new InvalidOperationException("VenuesDirectory configuration is required.");
     }
 
