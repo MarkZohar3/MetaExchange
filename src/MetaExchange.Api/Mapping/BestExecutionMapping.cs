@@ -1,8 +1,6 @@
 using MetaExchange.Api.DTOs;
 using MetaExchange.Application.BestExecution;
-
 using MetaExchange.Domain.Orders;
-using MetaExchange.Domain.OrderBooks;
 
 namespace MetaExchange.Api.Mapping;
 
@@ -39,7 +37,9 @@ public static class BestExecutionMapping
     public static OrderSide ToOrderSide(this string text)
     {
         if (Enum.TryParse<OrderSide>(text, ignoreCase: true, out var side))
+        {
             return side;
+        }
         throw new ArgumentException("Side must be 'Buy' or 'Sell'.", nameof(text));
     }
 }

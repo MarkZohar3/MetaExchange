@@ -10,7 +10,9 @@ public static class BestExecutionPlanner
         IReadOnlyList<VenueSnapshot> venues)
     {
         if (requestedBtc <= 0m || venues.Count == 0)
+        {
             return new BestExecutionPlan(side, requestedBtc, 0m, 0m, Array.Empty<ChildOrder>());
+        }
 
         // Build global candidate list (one candidate per price level per venue)
         var candidates = new List<Candidate>();
@@ -22,7 +24,10 @@ public static class BestExecutionPlanner
             foreach (var level in levels)
             {
                 if (level.Price <= 0m || level.Quantity <= 0m)
-                    continue;
+                {
+                    continue;                
+                }
+
 
                 candidates.Add(new Candidate(
                     VenueId: venue.VenueId,
@@ -54,7 +59,10 @@ public static class BestExecutionPlanner
         foreach (var candidate in candidates)
         {
             if (remaining <= 0m)
+            {
                 break;
+            }
+
 
             var price = candidate.Price;
 
@@ -66,7 +74,10 @@ public static class BestExecutionPlanner
 
                 var fillBtc = Math.Min(candidate.Quantity, Math.Min(maxAffordableBtc, remaining));
                 if (fillBtc <= 0m)
-                    continue;
+                {
+                    continue;  
+                }
+
 
                 orders.Add(new ChildOrder(
                     VenueId: candidate.VenueId,
@@ -88,7 +99,9 @@ public static class BestExecutionPlanner
 
                 var fillBtc = Math.Min(candidate.Quantity, Math.Min(maxSellableBtc, remaining));
                 if (fillBtc <= 0m)
-                    continue;
+                {
+                    continue;                    
+                }
 
                 orders.Add(new ChildOrder(
                     VenueId: candidate.VenueId,

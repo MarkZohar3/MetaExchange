@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <!-- Turn on built-in analyzers -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+
+    <!-- Pick one: "recommended" (safer) or "all" (stricter).
+         For .NET 8, use AnalysisLevel and AnalysisMode together. -->
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+
+    <!-- Enforce IDE* code style rules during build (requires .editorconfig) -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Nullable>enable</Nullable>
+
+    <!-- Do NOT enable globally on legacy code without planning.
+         If you already have it in csproj(s), keep it there or control it here. -->
+    <!-- <TreatWarningsAsErrors>true</TreatWarningsAsErrors> -->
+
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- optional, prevents doc warnings from failing build -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
+
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.0.0" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.19.0.132793" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

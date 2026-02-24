@@ -23,7 +23,9 @@ var requestedBtc = args.Length >= 2 && decimal.TryParse(args[1], out var amount)
 
 var side = OrderSide.Buy;
 if (args.Length >= 3 && Enum.TryParse<OrderSide>(args[2], ignoreCase: true, out var parsedSide))
+{
     side = parsedSide;
+}
 
 if (requestedBtc <= 0m)
 {

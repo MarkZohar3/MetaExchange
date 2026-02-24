@@ -30,7 +30,7 @@ public class BestExecutionServiceTests
         };
         Assert.Equal(2, venues.Length); // sanity check
 
-        IBestExecutionService service = new BestExecutionService();
+        var service = new BestExecutionService();
 
         // Act
         var plan = service.Plan(OrderSide.Sell, 1.5m, venues);

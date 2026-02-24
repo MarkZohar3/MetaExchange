@@ -1,5 +1,4 @@
 ﻿using MetaExchange.Application.MarketData.Parsing;
-using Xunit;
 using System.Globalization;
 
 namespace MetaExchange.Application.Tests.MarketData.Parsing;

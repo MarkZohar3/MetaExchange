@@ -1,5 +1,4 @@
 using MetaExchange.Application.MarketData.Ingestion;
-using Xunit;
 
 namespace MetaExchange.Application.Tests.MarketData.Ingestion;
 

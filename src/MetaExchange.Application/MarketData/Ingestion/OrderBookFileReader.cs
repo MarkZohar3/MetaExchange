@@ -17,10 +17,14 @@ public static class OrderBookFileReader
             lineNo++;
 
             if (maxLines is not null && lineNo > maxLines.Value)
+            {
                 yield break;
+            }
 
             if (!OrderBookLineParser.TryParseLine(line, out var parsed, out var error))
+            {
                 throw new FormatException($"Failed parsing line {lineNo}: {error}");
+            }
 
             yield return parsed;
         }

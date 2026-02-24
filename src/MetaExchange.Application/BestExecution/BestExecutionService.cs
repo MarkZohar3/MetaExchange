@@ -1,4 +1,3 @@
-using MetaExchange.Application.MarketData;
 using MetaExchange.Application.MarketData.Ingestion;
 using MetaExchange.Domain.Orders;
 
@@ -15,8 +14,9 @@ public sealed class BestExecutionService : IBestExecutionService
     public BestExecutionPlan PlanFromDirectory(string venuesDir, OrderSide side, decimal requestedBtc)
     {
         if (!Directory.Exists(venuesDir))
+        {
             throw new DirectoryNotFoundException(venuesDir);
-
+        }
         var files = Directory
             .EnumerateFiles(venuesDir)
             .OrderBy(f => f, StringComparer.OrdinalIgnoreCase);
@@ -26,10 +26,13 @@ public sealed class BestExecutionService : IBestExecutionService
         foreach (var file in files)
         {
             var id = Path.GetFileNameWithoutExtension(file);
-            IMarketDataSource src = new FileMarketDataSource(file);
+            var src = new FileMarketDataSource(file);
             var book = src.ReadSnapshots(maxLines: 1).FirstOrDefault();
             if (book is null)
+            {
                 continue;
+            }
+                
 
             snapshots.Add(new VenueSnapshot(
                 VenueId: id,
