@@ -40,7 +40,7 @@ public class BestExecutionServiceTests
         Assert.Equal(OrderSide.Sell, plan.Side);
         Assert.Equal(1.5m, plan.RequestedBtc);
         Assert.Equal(1.5m, plan.FilledBtc);
-        // proceeds from selling: 1*100 + 0.5*110 = 100 + 55 = 155
+        // proceeds from selling: 1*110 + 0.5*100 = 110 + 50 = 160
         Assert.Equal(160m, plan.TotalEur); // bids sorted high-to-low so v2 filled first
         Assert.Collection(plan.Orders,
             o =>
