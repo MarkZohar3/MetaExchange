@@ -43,7 +43,7 @@ var service = provider.GetRequiredService<IBestExecutionService>();
 BestExecutionPlan plan;
 try
 {
-    plan = service.PlanFromFile(venueFilePath, side, requestedAmount);
+    plan = await service.PlanFromFileAsync(venueFilePath, side, requestedAmount);
 }
 catch (FileNotFoundException)
 {

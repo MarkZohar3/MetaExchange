@@ -1,15 +1,15 @@
 using MetaExchange.Application.BestExecution;
+using MetaExchange.Application.MarketData;
 using MetaExchange.Domain.OrderBooks;
 using MetaExchange.Domain.Orders;
 using MetaExchange.Domain.Venues;
-
 
 namespace MetaExchange.Application.Tests.BestExecution;
 
 public class BestExecutionServiceTests
 {
     [Fact]
-    public void PlanFromFile_ReadsAllLinesAsVenueSnapshots()
+    public async Task PlanFromFile_ReadsAllLinesAsVenueSnapshots()
     {
         var service = new BestExecutionService();
         var venueFilePath = Path.GetTempFileName();
@@ -21,15 +21,14 @@ public class BestExecutionServiceTests
                 "10000.1\t{\"AcqTime\":\"2026-01-01T00:00:00Z\",\"Bids\":[],\"Asks\":[{\"Order\":{\"Id\":null,\"Time\":\"0001-01-01T00:00:00\",\"Type\":\"Sell\",\"Kind\":\"Limit\",\"Amount\":1.0,\"Price\":100.0}}]}",
                 "10000.1\t{\"AcqTime\":\"2026-01-01T00:00:01Z\",\"Bids\":[],\"Asks\":[{\"Order\":{\"Id\":null,\"Time\":\"0001-01-01T00:00:00\",\"Type\":\"Sell\",\"Kind\":\"Limit\",\"Amount\":1.0,\"Price\":90.0}}]}"
             };
-            File.WriteAllLines(venueFilePath, lines);
+            await File.WriteAllLinesAsync(venueFilePath, lines);
 
-            var plan = service.PlanFromFile(venueFilePath, OrderSide.Buy, 1m);
-            var venueBaseId = Path.GetFileNameWithoutExtension(venueFilePath);
+            var plan = await service.PlanFromFileAsync(venueFilePath, OrderSide.Buy, 1m);
 
             Assert.Equal(1m, plan.FilledBtc);
             Assert.Equal(90m, plan.TotalEur);
             Assert.Single(plan.Orders);
-            Assert.Equal($"{venueBaseId}-2", plan.Orders[0].VenueId);
+            Assert.Equal("Venue-2", plan.Orders[0].VenueId);
         }
         finally
         {
@@ -38,7 +37,7 @@ public class BestExecutionServiceTests
     }
 
     [Fact]
-    public void Plan_AggregatesCorrectly()
+    public async Task Plan_AggregatesCorrectly()
     {
         // Arrange
         var book1 = new OrderBookSnapshot(
@@ -63,7 +62,7 @@ public class BestExecutionServiceTests
         var service = new BestExecutionService();
 
         // Act
-        var plan = service.Plan(OrderSide.Sell, 1.5m, venues);
+        var plan = await service.PlanAsync(OrderSide.Sell, 1.5m, venues);
 
         // Assert
         Assert.Equal(OrderSide.Sell, plan.Side);

@@ -6,7 +6,7 @@ namespace MetaExchange.Application.BestExecution;
 
 public interface IBestExecutionService
 {
-    BestExecutionPlan Plan(OrderSide side, decimal amount, IReadOnlyList<VenueSnapshot> venues);
+    Task<BestExecutionPlan> PlanAsync(OrderSide side, decimal amount, IReadOnlyList<VenueSnapshot> venues);
 
-    BestExecutionPlan PlanFromFile(string venueFilePath, OrderSide side, decimal amount);
+    Task<BestExecutionPlan> PlanFromFileAsync(string venueFilePath, OrderSide side, decimal amount, CancellationToken cancellationToken = default);
 }

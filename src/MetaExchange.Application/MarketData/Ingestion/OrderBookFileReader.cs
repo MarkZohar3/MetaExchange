@@ -24,4 +24,10 @@ public static class OrderBookFileReader
             yield return parsed;
         }
     }
+
+    public static async Task<IReadOnlyList<ParsedSnapshot>> ReadSnapshotsAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        var lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
+        return ReadSnapshots(lines).ToArray();
+    }
 }

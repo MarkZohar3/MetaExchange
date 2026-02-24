@@ -30,7 +30,7 @@ public sealed class BestExecutionController : ControllerBase
     [ProducesResponseType(typeof(BestExecutionResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public ActionResult<BestExecutionResponseDto> Plan([FromBody] BestExecutionRequestDto req)
+    public async Task<ActionResult<BestExecutionResponseDto>> Plan([FromBody] BestExecutionRequestDto req)
     {
         if (req.Amount <= 0m)
         {
@@ -50,7 +50,7 @@ public sealed class BestExecutionController : ControllerBase
         BestExecutionPlan plan;
         try
         {
-            plan = _service.PlanFromFile(_venueFilePath, side, req.Amount);
+            plan = await _service.PlanFromFileAsync(_venueFilePath, side, req.Amount, HttpContext.RequestAborted);
         }
         catch (FileNotFoundException)
         {
