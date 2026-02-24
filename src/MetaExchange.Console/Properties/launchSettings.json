@@ -3,7 +3,7 @@
     "MetaExchange.Console": {
       "commandName": "Project",
       "workingDirectory": "..\\..",
-      "commandLineArgs": ".\\data\\venues"
+      "commandLineArgs": ".\\data\\venues\\order_books_data1"
     }
   }
 }

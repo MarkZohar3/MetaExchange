@@ -23,13 +23,13 @@ public static class BestExecutionMapper
     {
         ArgumentNullException.ThrowIfNull(order);
 
-        var totalEur = order.QuantityBtc * order.LimitPriceEurPerBtc;
+        var totalEur = order.Amount * order.LimitPriceEurPerBtc;
 
         return new ChildOrderDto(
             Venue: order.VenueId,
             Side: order.Side.ToString(),
             Price: order.LimitPriceEurPerBtc,
-            AmountBtc: order.QuantityBtc,
+            AmountBtc: order.Amount,
             TotalEur: totalEur);
     }
 

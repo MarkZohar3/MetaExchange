@@ -9,17 +9,46 @@ namespace MetaExchange.Application.Tests.BestExecution;
 public class BestExecutionServiceTests
 {
     [Fact]
+    public void PlanFromFile_ReadsAllLinesAsVenueSnapshots()
+    {
+        var service = new BestExecutionService();
+        var venueFilePath = Path.GetTempFileName();
+
+        try
+        {
+            var lines = new[]
+            {
+                "10000.1\t{\"AcqTime\":\"2026-01-01T00:00:00Z\",\"Bids\":[],\"Asks\":[{\"Order\":{\"Id\":null,\"Time\":\"0001-01-01T00:00:00\",\"Type\":\"Sell\",\"Kind\":\"Limit\",\"Amount\":1.0,\"Price\":100.0}}]}",
+                "10000.1\t{\"AcqTime\":\"2026-01-01T00:00:01Z\",\"Bids\":[],\"Asks\":[{\"Order\":{\"Id\":null,\"Time\":\"0001-01-01T00:00:00\",\"Type\":\"Sell\",\"Kind\":\"Limit\",\"Amount\":1.0,\"Price\":90.0}}]}"
+            };
+            File.WriteAllLines(venueFilePath, lines);
+
+            var plan = service.PlanFromFile(venueFilePath, OrderSide.Buy, 1m);
+            var venueBaseId = Path.GetFileNameWithoutExtension(venueFilePath);
+
+            Assert.Equal(1m, plan.FilledBtc);
+            Assert.Equal(90m, plan.TotalEur);
+            Assert.Single(plan.Orders);
+            Assert.Equal($"{venueBaseId}-2", plan.Orders[0].VenueId);
+        }
+        finally
+        {
+            File.Delete(venueFilePath);
+        }
+    }
+
+    [Fact]
     public void Plan_AggregatesCorrectly()
     {
         // Arrange
         var book1 = new OrderBookSnapshot(
-            unixTimeSeconds: 0m,
+            venueBalances: new VenueBalances(1m, 1m),
             acqTime: DateTime.UtcNow,
             bids: new[] { new PriceLevel(100m, 1m) },
             asks: Array.Empty<PriceLevel>());
 
         var book2 = new OrderBookSnapshot(
-            unixTimeSeconds: 0m,
+            venueBalances: new VenueBalances(1m, 1m),
             acqTime: DateTime.UtcNow,
             bids: new[] { new PriceLevel(110m, 1m) },
             asks: Array.Empty<PriceLevel>());
@@ -38,7 +67,7 @@ public class BestExecutionServiceTests
 
         // Assert
         Assert.Equal(OrderSide.Sell, plan.Side);
-        Assert.Equal(1.5m, plan.RequestedBtc);
+        Assert.Equal(1.5m, plan.Amount);
         Assert.Equal(1.5m, plan.FilledBtc);
         // proceeds from selling: 1*110 + 0.5*100 = 110 + 50 = 160
         Assert.Equal(160m, plan.TotalEur); // bids sorted high-to-low so v2 filled first
@@ -47,13 +76,13 @@ public class BestExecutionServiceTests
             {
                 // highest bid (110) is filled first
                 Assert.Equal("v2", o.VenueId);
-                Assert.Equal(1m, o.QuantityBtc);
+                Assert.Equal(1m, o.Amount);
                 Assert.Equal(110m, o.LimitPriceEurPerBtc);
             },
             o =>
             {
                 Assert.Equal("v1", o.VenueId);
-                Assert.Equal(0.5m, o.QuantityBtc);
+                Assert.Equal(0.5m, o.Amount);
                 Assert.Equal(100m, o.LimitPriceEurPerBtc);
             });
     }

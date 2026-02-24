@@ -8,5 +8,5 @@ public interface IBestExecutionService
 {
     BestExecutionPlan Plan(OrderSide side, decimal amount, IReadOnlyList<VenueSnapshot> venues);
 
-    BestExecutionPlan PlanFromDirectory(string venuesDir, OrderSide side, decimal amount);
+    BestExecutionPlan PlanFromFile(string venueFilePath, OrderSide side, decimal amount);
 }

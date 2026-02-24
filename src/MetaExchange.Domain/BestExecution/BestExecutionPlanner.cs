@@ -33,7 +33,7 @@ public static class BestExecutionPlanner
 
             foreach (var level in levels)
             {
-                if (level.Price <= 0m || level.Quantity <= 0m)
+                if (level.Price <= 0m || level.Amount <= 0m)
                 {
                     continue;                
                 }
@@ -41,17 +41,15 @@ public static class BestExecutionPlanner
                 candidates.Add(new Candidate(
                     VenueId: venue.VenueId,
                     Price: level.Price,
-                    Quantity: level.Quantity));
+                    Quantity: level.Amount));
             }
         }
 
-        // Sort by best price
         candidates.Sort((a, b) =>
             side == OrderSide.Buy
                 ? a.Price.CompareTo(b.Price)   // buy: cheapest asks first
                 : b.Price.CompareTo(a.Price)); // sell: highest bids first
 
-        // Track balances per venue (mutable during planning)
         var eurByVenue = new Dictionary<string, decimal>(StringComparer.Ordinal);
         var btcByVenue = new Dictionary<string, decimal>(StringComparer.Ordinal);
 
@@ -91,7 +89,7 @@ public static class BestExecutionPlanner
                 orders.Add(new ChildOrder(
                     venueId: candidate.VenueId,
                     side: OrderSide.Buy,
-                    quantityBtc: fillBtc,
+                    amount: fillBtc,
                     limitPriceEurPerBtc: price));
 
                 var costEur = fillBtc * price;
@@ -106,8 +104,8 @@ public static class BestExecutionPlanner
 
                 var maxSellableBtc = btc;
 
-                var fillBtc = Math.Min(candidate.Quantity, Math.Min(maxSellableBtc, remaining));
-                if (fillBtc <= 0m)
+                var fillAmount = Math.Min(candidate.Quantity, Math.Min(maxSellableBtc, remaining));
+                if (fillAmount <= 0m)
                 {
                     continue;                    
                 }
@@ -115,14 +113,14 @@ public static class BestExecutionPlanner
                 orders.Add(new ChildOrder(
                     venueId: candidate.VenueId,
                     side: OrderSide.Sell,
-                    quantityBtc: fillBtc,
+                    amount: fillAmount,
                     limitPriceEurPerBtc: price));
 
-                btcByVenue[candidate.VenueId] = btc - fillBtc;
+                btcByVenue[candidate.VenueId] = btc - fillAmount;
 
-                var proceedsEur = fillBtc * price;
+                var proceedsEur = fillAmount * price;
                 totalEur += proceedsEur;
-                remaining -= fillBtc;
+                remaining -= fillAmount;
             }
         }
 

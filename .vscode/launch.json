@@ -10,7 +10,7 @@
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/MetaExchange.Console/MetaExchange.Console.csproj",
             "args": [
-                "${workspaceFolder}/data/venues"
+                "${workspaceFolder}/data/venues/order_books_data1"
             ],
             "cwd": "${workspaceFolder}"
         },
@@ -40,7 +40,7 @@
             "id": "orderBookPath",
             "type": "promptString",
             "description": "Path to order book file",
-            "default": "${workspaceFolder}/data/venues"
+            "default": "${workspaceFolder}/data/venues/order_books_data1"
         }
     ]
 }

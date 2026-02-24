@@ -15,15 +15,15 @@ namespace MetaExchange.Api.Controllers;
 public sealed class BestExecutionController : ControllerBase
 {
     private readonly IBestExecutionService _service;
-    private readonly string _venuesDir;
+    private readonly string _venueFilePath;
 
     public BestExecutionController(IBestExecutionService service, IOptions<VenuesOptions> options)
     {
         _service = service;
 
-        var venuesDir = options?.Value?.VenuesDirectory;
-        _venuesDir = venuesDir
-            ?? throw new InvalidOperationException("VenuesDirectory configuration is required.");
+        var venueFilePath = options?.Value?.VenueFilePath;
+        _venueFilePath = venueFilePath
+            ?? throw new InvalidOperationException("VenueFilePath configuration is required.");
     }
 
     [HttpPost("plan")]
@@ -50,11 +50,11 @@ public sealed class BestExecutionController : ControllerBase
         BestExecutionPlan plan;
         try
         {
-            plan = _service.PlanFromDirectory(_venuesDir, side, req.Amount);
+            plan = _service.PlanFromFile(_venueFilePath, side, req.Amount);
         }
-        catch (DirectoryNotFoundException)
+        catch (FileNotFoundException)
         {
-            return Problem(detail: $"Venue directory not found: {_venuesDir}", statusCode:500);
+            return Problem(detail: $"Venue file not found: {_venueFilePath}", statusCode:500);
         }
 
         return Ok(plan.ToDto());

@@ -4,22 +4,17 @@ using MetaExchange.Application.MarketData.Parsing;
 
 public static class OrderBookFileReader
 {
-    public static IEnumerable<ParsedSnapshot> ReadSnapshots(string filePath, int? maxLines = null)
+    public static IEnumerable<ParsedSnapshot> ReadSnapshots(string filePath)
     {
-        return ReadSnapshots(File.ReadLines(filePath), maxLines);
+        return ReadSnapshots(File.ReadLines(filePath));
     }
-    public static IEnumerable<ParsedSnapshot> ReadSnapshots(IEnumerable<string> lines, int? maxLines = null)
+    public static IEnumerable<ParsedSnapshot> ReadSnapshots(IEnumerable<string> lines)
     {
         var lineNo = 0;
 
         foreach (var line in lines)
         {
             lineNo++;
-
-            if (maxLines is not null && lineNo > maxLines.Value)
-            {
-                yield break;
-            }
 
             if (!OrderBookLineParser.TryParseLine(line, out var parsed, out var error))
             {

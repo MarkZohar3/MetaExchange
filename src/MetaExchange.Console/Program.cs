@@ -1,10 +1,10 @@
 ﻿// Program.cs (MetaExchange.Console)
 //
 // Usage:
-//   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- <venuesDir> [amount] [side]
+//   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- <venueFilePath> [amount] [side]
 //
 // Example:
-//   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
+//   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues\order_books_data1 0.9 Buy
 
 using MetaExchange.Application.BestExecution;
 using MetaExchange.Domain.BestExecution;
@@ -13,12 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 if (args.Length == 0)
 {
-    Console.WriteLine("Usage: MetaExchange.ConsoleApp <venuesDir> [amount] [side]");
-    Console.WriteLine(@"Example: dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy");
+    Console.WriteLine("Usage: MetaExchange.ConsoleApp <venueFilePath> [amount] [side]");
+    Console.WriteLine(@"Example: dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues\order_books_data1 0.9 Buy");
     return;
 }
 
-var venuesDir = args[0];
+var venueFilePath = args[0];
 
 var requestedAmount = args.Length >= 2 && decimal.TryParse(args[1], out var amount) ? amount : 0.9m;
 
@@ -43,11 +43,11 @@ var service = provider.GetRequiredService<IBestExecutionService>();
 BestExecutionPlan plan;
 try
 {
-    plan = service.PlanFromDirectory(venuesDir, side, requestedAmount);
+    plan = service.PlanFromFile(venueFilePath, side, requestedAmount);
 }
-catch (DirectoryNotFoundException)
+catch (FileNotFoundException)
 {
-    Console.WriteLine($"Directory not found: {venuesDir}");
+    Console.WriteLine($"File not found: {venueFilePath}");
     return;
 }
 
@@ -66,5 +66,5 @@ if (plan.Orders.Count == 0)
 Console.WriteLine("Orders:");
 foreach (var o in plan.Orders)
 {
-    Console.WriteLine($"  {o.VenueId} {o.Side} {o.QuantityBtc} BTC @ {o.LimitPriceEurPerBtc}");
+    Console.WriteLine($"  {o.VenueId} {o.Side} {o.Amount} BTC @ {o.LimitPriceEurPerBtc}");
 }

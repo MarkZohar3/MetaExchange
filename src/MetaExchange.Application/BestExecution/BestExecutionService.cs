@@ -10,32 +10,20 @@ public sealed class BestExecutionService : IBestExecutionService
     public BestExecutionPlan Plan(OrderSide side, decimal amount, IReadOnlyList<VenueSnapshot> venues)
         => BestExecutionPlanner.Plan(side, amount, venues);
 
-    public BestExecutionPlan PlanFromDirectory(string venuesDir, OrderSide side, decimal amount)
+    public BestExecutionPlan PlanFromFile(string venueFilePath, OrderSide side, decimal amount)
     {
-        if (!Directory.Exists(venuesDir))
+        if (!File.Exists(venueFilePath))
         {
-            throw new DirectoryNotFoundException(venuesDir);
+            throw new FileNotFoundException("Venue file not found.", venueFilePath);
         }
-        var files = Directory
-            .EnumerateFiles(venuesDir)
-            .OrderBy(f => f, StringComparer.OrdinalIgnoreCase);
 
-        var snapshots = new List<VenueSnapshot>();
-
-        foreach (var file in files)
-        {
-            var id = Path.GetFileNameWithoutExtension(file);
-            var parsed = OrderBookFileReader.ReadSnapshots(file, maxLines: 1).FirstOrDefault();
-            if (parsed is null)
-            {
-                continue;
-            }
-
-            snapshots.Add(new VenueSnapshot(
-                venueId: id,
+        var snapshots = OrderBookFileReader
+            .ReadSnapshots(venueFilePath)
+            .Select((parsed, index) => new VenueSnapshot(
+                venueId: $"Venue-{index + 1}",
                 book: parsed.Snapshot,
-                balances: parsed.Balances));
-        }
+                balances: parsed.Balances))
+            .ToArray();
 
         return Plan(side, amount, snapshots);
     }
