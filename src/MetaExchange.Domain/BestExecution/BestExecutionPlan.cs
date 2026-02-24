@@ -13,23 +13,32 @@ public sealed record BestExecutionPlan
 
     public BestExecutionPlan(OrderSide side, decimal requestedBtc, decimal filledBtc, decimal totalEur, IReadOnlyList<ChildOrder> orders)
     {
-        if (requestedBtc < 0)
+        if (requestedBtc < 0m)
         {
-            throw new ArgumentException("RequestedBtc must be non-negative", nameof(requestedBtc));
+            throw new ArgumentOutOfRangeException(nameof(requestedBtc), "RequestedBtc must be non-negative");
         }
-        if (filledBtc < 0)
+        if (filledBtc < 0m)
         {
-            throw new ArgumentException("FilledBtc must be non-negative", nameof(filledBtc));
+            throw new ArgumentOutOfRangeException(nameof(filledBtc), "FilledBtc must be non-negative");
         }
-        if (totalEur < 0)
+        if (filledBtc > requestedBtc)
         {
-            throw new ArgumentException("TotalEur must be non-negative", nameof(totalEur));
+            throw new ArgumentException("FilledBtc cannot exceed RequestedBtc", nameof(filledBtc));
+        }
+        if (totalEur < 0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(totalEur), "TotalEur must be non-negative");
+        }
+
+        Orders = orders ?? throw new ArgumentNullException(nameof(orders));
+        if (Orders.Any(o => o is null))
+        {
+            throw new ArgumentException("Orders list must not contain null", nameof(orders));
         }
 
         Side = side;
         RequestedBtc = requestedBtc;
         FilledBtc = filledBtc;
         TotalEur = totalEur;
-        Orders = orders;
     }
 }

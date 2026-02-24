@@ -7,6 +7,7 @@
 //   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
 
 using MetaExchange.Application.BestExecution;
+using MetaExchange.Domain.BestExecution;
 using MetaExchange.Domain.Orders;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -12,11 +12,40 @@ public sealed class OrderBookSnapshotDto
 
     public OrderBookSnapshot ToDomain(decimal unixTimeSeconds)
     {
+        ArgumentNullException.ThrowIfNull(Bids);
+        ArgumentNullException.ThrowIfNull(Asks);
+
+        var bids = Bids.Select(e =>
+        {
+            if (e is null)
+            {
+                throw new ArgumentException("Bid list contains a null element");
+            }
+            if (e.Order.Price <= 0m || e.Order.Amount <= 0m)
+            {
+                throw new ArgumentException("PriceLevel values must be positive");
+            }
+            return new PriceLevel(e.Order.Price, e.Order.Amount);
+        }).ToList();
+
+        var asks = Asks.Select(e =>
+        {
+            if (e is null)
+            {
+                throw new ArgumentException("Ask list contains a null element");
+            }
+            if (e.Order.Price <= 0m || e.Order.Amount <= 0m)
+            {
+                throw new ArgumentException("PriceLevel values must be positive");
+            }
+            return new PriceLevel(e.Order.Price, e.Order.Amount);
+        }).ToList();
+
         return new OrderBookSnapshot(
             unixTimeSeconds,
             AcqTime,
-            Bids.Select(e => new PriceLevel(e.Order.Price, e.Order.Amount)).ToList(),
-            Asks.Select(e => new PriceLevel(e.Order.Price, e.Order.Amount)).ToList()
+            bids,
+            asks
         );
     }
 }

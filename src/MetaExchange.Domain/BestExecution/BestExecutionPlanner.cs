@@ -10,9 +10,18 @@ public static class BestExecutionPlanner
         decimal requestedBtc,
         IReadOnlyList<VenueSnapshot> venues)
     {
-        if (requestedBtc <= 0m || venues.Count == 0)
+        ArgumentNullException.ThrowIfNull(venues);
+        if (requestedBtc < 0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(requestedBtc), "requestedBtc must be non-negative");
+        }
+        if (venues.Count == 0 || requestedBtc == 0m)
         {
             return new BestExecutionPlan(side, requestedBtc, 0m, 0m, Array.Empty<ChildOrder>());
+        }
+        if (venues.Any(v => v is null))
+        {
+            throw new ArgumentException("venues list must not contain null", nameof(venues));
         }
 
         // Build global candidate list (one candidate per price level per venue)
