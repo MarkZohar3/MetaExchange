@@ -32,9 +32,9 @@ public sealed class BestExecutionController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public ActionResult<BestExecutionResponseDto> Plan([FromBody] BestExecutionRequestDto req)
     {
-        if (req.RequestedBtc <= 0m)
+        if (req.Amount <= 0m)
         {
-            return BadRequest(new { error = "RequestedBtc must be > 0." });
+            return BadRequest(new { error = "Amount must be > 0." });
         }
 
         OrderSide side;
@@ -50,7 +50,7 @@ public sealed class BestExecutionController : ControllerBase
         BestExecutionPlan plan;
         try
         {
-            plan = _service.PlanFromDirectory(_venuesDir, side, req.RequestedBtc);
+            plan = _service.PlanFromDirectory(_venuesDir, side, req.Amount);
         }
         catch (DirectoryNotFoundException)
         {

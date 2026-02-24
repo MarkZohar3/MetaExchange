@@ -31,8 +31,7 @@
             "projectPath": "${workspaceFolder}/src/MetaExchange.Api/MetaExchange.Api.csproj",
             "cwd": "${workspaceFolder}",
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "VenuesDirectory": "${workspaceFolder}/data/venues"
+                "ASPNETCORE_ENVIRONMENT": "Development"
             }
         }
     ],

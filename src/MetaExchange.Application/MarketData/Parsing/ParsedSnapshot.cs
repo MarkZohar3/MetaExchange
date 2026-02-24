@@ -1,8 +1,9 @@
 namespace MetaExchange.Application.MarketData.Parsing;
 
+using MetaExchange.Domain.Venues;
 using MetaExchange.Domain.OrderBooks;
 
 public sealed record ParsedSnapshot(
-    decimal UnixTimeSeconds,
+    VenueBalances Balances,
     OrderBookSnapshot Snapshot
 );

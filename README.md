@@ -23,7 +23,7 @@ Every file is considered as a separate venue.
 
 ```powershell
 # from the repo root
-dotnet run --project MetaExchange.Console.csproj -- <venuesDir> [requestedBtc] [side]
+dotnet run --project MetaExchange.Console.csproj -- <venuesDir> [requestedamountBtc] [side]
 ```
 
 Example:
@@ -32,7 +32,7 @@ Example:
 dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
 ```
 
-If `requestedBtc` or `side` are omitted, the defaults are `0.9` and `Buy`.
+If `amount` or `side` are omitted, the defaults are `0.9` and `Buy`.
 
 ### Sample output
 
@@ -71,7 +71,7 @@ Body example:
 ```json
 {
   "side": "Buy",
-  "requestedBtc": 1.2
+  "amount": 1.2
 }
 ```
 
@@ -80,7 +80,7 @@ Response:
 ```json
 {
   "side": "Buy",
-  "requestedBtc": 1.2,
+  "amount": 1.2,
   "filledBtc": 1.2,
   "totalEur": 36000.0,
   "orders": [

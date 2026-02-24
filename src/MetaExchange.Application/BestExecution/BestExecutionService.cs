@@ -7,13 +7,10 @@ namespace MetaExchange.Application.BestExecution;
 
 public sealed class BestExecutionService : IBestExecutionService
 {
-    private const decimal DefaultEur = 50_000m;
-    private const decimal DefaultBtc = 2m;
+    public BestExecutionPlan Plan(OrderSide side, decimal amount, IReadOnlyList<VenueSnapshot> venues)
+        => BestExecutionPlanner.Plan(side, amount, venues);
 
-    public BestExecutionPlan Plan(OrderSide side, decimal requestedBtc, IReadOnlyList<VenueSnapshot> venues)
-        => BestExecutionPlanner.Plan(side, requestedBtc, venues);
-
-    public BestExecutionPlan PlanFromDirectory(string venuesDir, OrderSide side, decimal requestedBtc)
+    public BestExecutionPlan PlanFromDirectory(string venuesDir, OrderSide side, decimal amount)
     {
         if (!Directory.Exists(venuesDir))
         {
@@ -28,19 +25,18 @@ public sealed class BestExecutionService : IBestExecutionService
         foreach (var file in files)
         {
             var id = Path.GetFileNameWithoutExtension(file);
-            var src = new FileMarketDataSource(file);
-            var book = src.ReadSnapshots(maxLines: 1).FirstOrDefault();
-            if (book is null)
+            var parsed = OrderBookFileReader.ReadSnapshots(file, maxLines: 1).FirstOrDefault();
+            if (parsed is null)
             {
                 continue;
             }
 
             snapshots.Add(new VenueSnapshot(
                 venueId: id,
-                book: book,
-                balances: new VenueBalances(DefaultEur, DefaultBtc)));
+                book: parsed.Snapshot,
+                balances: parsed.Balances));
         }
 
-        return Plan(side, requestedBtc, snapshots);
+        return Plan(side, amount, snapshots);
     }
 }

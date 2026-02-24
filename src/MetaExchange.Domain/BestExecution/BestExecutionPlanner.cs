@@ -7,17 +7,17 @@ public static class BestExecutionPlanner
 {
     public static BestExecutionPlan Plan(
         OrderSide side,
-        decimal requestedBtc,
+        decimal amount,
         IReadOnlyList<VenueSnapshot> venues)
     {
         ArgumentNullException.ThrowIfNull(venues);
-        if (requestedBtc < 0m)
+        if (amount < 0m)
         {
-            throw new ArgumentOutOfRangeException(nameof(requestedBtc), "requestedBtc must be non-negative");
+            throw new ArgumentOutOfRangeException(nameof(amount), "amount must be non-negative");
         }
-        if (venues.Count == 0 || requestedBtc == 0m)
+        if (venues.Count == 0 || amount == 0m)
         {
-            return new BestExecutionPlan(side, requestedBtc, 0m, 0m, Array.Empty<ChildOrder>());
+            return new BestExecutionPlan(side, amount, 0m, 0m, Array.Empty<ChildOrder>());
         }
         if (venues.Any(v => v is null))
         {
@@ -37,7 +37,6 @@ public static class BestExecutionPlanner
                 {
                     continue;                
                 }
-
 
                 candidates.Add(new Candidate(
                     VenueId: venue.VenueId,
@@ -62,7 +61,7 @@ public static class BestExecutionPlanner
             btcByVenue[v.VenueId] = v.Balances.Btc;
         }
 
-        var remaining = requestedBtc;
+        var remaining = amount;
         var totalEur = 0m;
         var orders = new List<ChildOrder>();
 
@@ -127,12 +126,12 @@ public static class BestExecutionPlanner
             }
         }
 
-        var filled = requestedBtc - remaining;
+        var filled = amount - remaining;
 
         return new BestExecutionPlan(
             side: side,
-            requestedBtc: requestedBtc,
-            filledBtc: filled,
+            amount: amount,
+            filledAmount: filled,
             totalEur: totalEur,
             orders: orders);
     }

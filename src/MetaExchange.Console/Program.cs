@@ -1,7 +1,7 @@
 ﻿// Program.cs (MetaExchange.Console)
 //
 // Usage:
-//   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- <venuesDir> [requestedBtc] [side]
+//   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- <venuesDir> [amount] [side]
 //
 // Example:
 //   dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
@@ -13,14 +13,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 if (args.Length == 0)
 {
-    Console.WriteLine("Usage: MetaExchange.ConsoleApp <venuesDir> [requestedBtc] [side]");
+    Console.WriteLine("Usage: MetaExchange.ConsoleApp <venuesDir> [amount] [side]");
     Console.WriteLine(@"Example: dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy");
     return;
 }
 
 var venuesDir = args[0];
 
-var requestedBtc = args.Length >= 2 && decimal.TryParse(args[1], out var amount) ? amount : 0.9m;
+var requestedAmount = args.Length >= 2 && decimal.TryParse(args[1], out var amount) ? amount : 0.9m;
 
 var side = OrderSide.Buy;
 if (args.Length >= 3 && Enum.TryParse<OrderSide>(args[2], ignoreCase: true, out var parsedSide))
@@ -28,9 +28,9 @@ if (args.Length >= 3 && Enum.TryParse<OrderSide>(args[2], ignoreCase: true, out 
     side = parsedSide;
 }
 
-if (requestedBtc <= 0m)
+if (requestedAmount <= 0m)
 {
-    Console.WriteLine("requestedBtc must be > 0.");
+    Console.WriteLine("requestedAmount must be > 0.");
     return;
 }
 
@@ -43,7 +43,7 @@ var service = provider.GetRequiredService<IBestExecutionService>();
 BestExecutionPlan plan;
 try
 {
-    plan = service.PlanFromDirectory(venuesDir, side, requestedBtc);
+    plan = service.PlanFromDirectory(venuesDir, side, requestedAmount);
 }
 catch (DirectoryNotFoundException)
 {
@@ -52,9 +52,9 @@ catch (DirectoryNotFoundException)
 }
 
 Console.WriteLine($"Venues: {plan.Orders.Select(o => o.VenueId).Distinct().Count()}");
-Console.WriteLine($"Request: {side} {requestedBtc} BTC");
+Console.WriteLine($"Request: {side} {requestedAmount} BTC");
 Console.WriteLine();
-Console.WriteLine($"Filled:   {plan.FilledBtc}/{plan.RequestedBtc} BTC");
+Console.WriteLine($"Filled:   {plan.FilledBtc}/{plan.Amount} BTC");
 Console.WriteLine($"TotalEUR: {plan.TotalEur}");
 
 if (plan.Orders.Count == 0)

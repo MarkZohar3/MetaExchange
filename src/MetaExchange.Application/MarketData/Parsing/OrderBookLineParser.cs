@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.Json;
 using MetaExchange.Application.MarketData.DTOs;
 using MetaExchange.Domain.OrderBooks;
+using MetaExchange.Domain.Venues;
 
 public static class OrderBookLineParser
 {
@@ -26,16 +27,30 @@ public static class OrderBookLineParser
         var tabIndex = line.IndexOf('\t');
         if (tabIndex <= 0 || tabIndex >= line.Length - 1)
         {
-            error = "Line must be in format: <unixSeconds><TAB><json>.";
+            error = "Line must be in format: <eurBalance>,<btcBalance><TAB><json>.";
             return false;
         }
 
-        var unixStr = line[..tabIndex].Trim();
+        var balancesStr = line[..tabIndex].Trim();
         var jsonStr = line[(tabIndex + 1)..].Trim();
 
-        if (!decimal.TryParse(unixStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var unixSeconds))
+        var balanceParts = balancesStr.Split('.', 2, StringSplitOptions.TrimEntries);
+        if (balanceParts.Length != 2
+            || !decimal.TryParse(balanceParts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var eur)
+            || !decimal.TryParse(balanceParts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var btc))
         {
-            error = $"Invalid unix timestamp: '{unixStr}'.";
+            error = $"Invalid balances prefix: '{balancesStr}'. Expected '<eurBalance>,<btcBalance>'.";
+            return false;
+        }
+
+        VenueBalances balances;
+        try
+        {
+            balances = new VenueBalances(eur, btc);
+        }
+        catch (Exception ex)
+        {
+            error = $"Invalid balances: {ex.Message}";
             return false;
         }
 
@@ -59,7 +74,8 @@ public static class OrderBookLineParser
         OrderBookSnapshot snapshot;
         try
         {
-            snapshot = dto.ToDomain(unixSeconds);
+            var venueBalances = new VenueBalances(balances.Eur, balances.Btc);
+            snapshot = dto.ToDomain(venueBalances);
         }
         catch (Exception ex)
         {
@@ -67,7 +83,7 @@ public static class OrderBookLineParser
             return false;
         }
 
-        parsed = new ParsedSnapshot(unixSeconds, snapshot);
+        parsed = new ParsedSnapshot(balances, snapshot);
         return true;
     }
 }
