@@ -14,7 +14,7 @@ public static class BestExecutionMapper
         return new BestExecutionResponseDto(
             Side: plan.Side.ToString(),
             Amount: plan.Amount,
-            FilledBtc: plan.FilledBtc,
+            FilledBtc: plan.FilledAmount,
             TotalEur: plan.TotalEur,
             Orders: plan.Orders.Select(ToDto).ToArray());
     }

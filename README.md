@@ -16,14 +16,13 @@ A single snapshot looks like the examples included in the `data` folder.
 
 ## Console application
 
-The console application is a simple entry point that reads the order books from a directory and prints a plan to stdout.
-Every file is considered as a separate venue.
+The console application is a simple entry point that reads the order books from a file and prints a plan to stdout.
 
 ### Build & run
 
 ```powershell
 # from the repo root
-dotnet run --project MetaExchange.Console.csproj -- <venuesDir> [requestedamountBtc] [side]
+dotnet run --project MetaExchange.Console.csproj -- <venueFile> [requestedamountBtc] [side]
 ```
 
 Example:
@@ -57,8 +56,8 @@ The API is located in `src/MetaExchange.Api` and listens on port **8080** by def
 
 ```powershell
 cd src/MetaExchange.Api
-# configure environment variable point at your venues directory
-$env:VenuesDirectory = "..\\..\\data\\venues"
+# configure environment variable point at your venues file
+$env:VenuesDirectory = "..\\..\\data\\venues\\order_books_data1"
 dotnet run
 ```
 

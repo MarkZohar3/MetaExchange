@@ -54,7 +54,7 @@ catch (FileNotFoundException)
 Console.WriteLine($"Venues: {plan.Orders.Select(o => o.VenueId).Distinct().Count()}");
 Console.WriteLine($"Request: {side} {requestedAmount} BTC");
 Console.WriteLine();
-Console.WriteLine($"Filled:   {plan.FilledBtc}/{plan.Amount} BTC");
+Console.WriteLine($"Filled:   {plan.FilledAmount}/{plan.Amount} BTC");
 Console.WriteLine($"TotalEUR: {plan.TotalEur}");
 
 if (plan.Orders.Count == 0)

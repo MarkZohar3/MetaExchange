@@ -7,7 +7,7 @@ public sealed record BestExecutionPlan
 {
     public OrderSide Side { get; }
     public decimal Amount { get; }
-    public decimal FilledBtc { get; }
+    public decimal FilledAmount { get; }
     public decimal TotalEur { get; }
     public IReadOnlyList<ChildOrder> Orders { get; }
 
@@ -38,7 +38,7 @@ public sealed record BestExecutionPlan
 
         Side = side;
         Amount = amount;
-        FilledBtc = filledAmount;
+        FilledAmount = filledAmount;
         TotalEur = totalEur;
     }
 }
