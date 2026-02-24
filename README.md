@@ -28,7 +28,7 @@ dotnet run --project MetaExchange.Console.csproj -- <venueFile> [requestedamount
 Example:
 
 ```powershell
-dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
+dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues\order_books_data1 0.9 Buy
 ```
 
 If `amount` or `side` are omitted, the defaults are `0.9` and `Buy`.
@@ -110,7 +110,7 @@ docker compose up -d api
 docker compose run --rm console
 
 #start console with custom parameters (example)
-docker compose run --rm console /data/venues 0.5 Buy
+docker compose run --rm console /data/venues/order_books_data1 0.5 Buy
 ```
 
 The API will be available on `http://localhost:8080` and Swagger UI at `http://localhost:8080/swagger`.
