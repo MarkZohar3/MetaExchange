@@ -4,5 +4,5 @@ using MetaExchange.Domain.OrderBooks;
 
 public interface IMarketDataSource
 {
-    IEnumerable<OrderBookSnapshot> ReadSnapshots(int? maxLines = null);
+    IEnumerable<OrderBookSnapshot> ReadSnapshots();
 }

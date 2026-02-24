@@ -7,18 +7,18 @@ public sealed record ChildOrder
 {
     public string VenueId { get; }
     public OrderSide Side { get; }
-    public decimal QuantityBtc { get; }
+    public decimal Amount { get; }
     public decimal LimitPriceEurPerBtc { get; }
 
-    public ChildOrder(string venueId, OrderSide side, decimal quantityBtc, decimal limitPriceEurPerBtc)
+    public ChildOrder(string venueId, OrderSide side, decimal amount, decimal limitPriceEurPerBtc)
     {
         if (string.IsNullOrWhiteSpace(venueId))
         {
             throw new ArgumentException("VenueId must be provided", nameof(venueId));
         }
-        if (quantityBtc <= 0m)
+        if (amount <= 0m)
         {
-            throw new ArgumentOutOfRangeException(nameof(quantityBtc), "QuantityBtc must be positive");
+            throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be positive");
         }
         if (limitPriceEurPerBtc <= 0m)
         {
@@ -27,7 +27,7 @@ public sealed record ChildOrder
 
         VenueId = venueId;
         Side = side;
-        QuantityBtc = quantityBtc;
+        Amount = amount;
         LimitPriceEurPerBtc = limitPriceEurPerBtc;
     }
 }

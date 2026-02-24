@@ -1,16 +1,16 @@
 namespace MetaExchange.Application.MarketData.DTOs;
 
 using MetaExchange.Domain.OrderBooks;
+using MetaExchange.Domain.Venues;
 
 public sealed class OrderBookSnapshotDto
 {
-    public decimal UnixTimeSeconds { get; init; }
     public DateTime AcqTime { get; init; }
 
     public List<OrderEntryDto> Bids { get; init; } = new();
     public List<OrderEntryDto> Asks { get; init; } = new();
 
-    public OrderBookSnapshot ToDomain(decimal unixTimeSeconds)
+    public OrderBookSnapshot ToDomain(VenueBalances venueBalances)
     {
         ArgumentNullException.ThrowIfNull(Bids);
         ArgumentNullException.ThrowIfNull(Asks);
@@ -42,7 +42,7 @@ public sealed class OrderBookSnapshotDto
         }).ToList();
 
         return new OrderBookSnapshot(
-            unixTimeSeconds,
+            venueBalances,
             AcqTime,
             bids,
             asks

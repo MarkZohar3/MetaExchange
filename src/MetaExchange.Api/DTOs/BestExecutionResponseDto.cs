@@ -2,7 +2,7 @@ namespace MetaExchange.Api.DTOs;
 
 public sealed record BestExecutionResponseDto(
     string Side,
-    decimal RequestedBtc,
+    decimal Amount,
     decimal FilledBtc,
     decimal TotalEur,
     IReadOnlyList<ChildOrderDto> Orders);

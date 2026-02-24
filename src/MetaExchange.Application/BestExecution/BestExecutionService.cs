@@ -7,40 +7,25 @@ namespace MetaExchange.Application.BestExecution;
 
 public sealed class BestExecutionService : IBestExecutionService
 {
-    private const decimal DefaultEur = 50_000m;
-    private const decimal DefaultBtc = 2m;
+    public Task<BestExecutionPlan> PlanAsync(OrderSide side, decimal amount, IReadOnlyList<VenueSnapshot> venues)
+        => Task.FromResult(BestExecutionPlanner.Plan(side, amount, venues));
 
-    public BestExecutionPlan Plan(OrderSide side, decimal requestedBtc, IReadOnlyList<VenueSnapshot> venues)
-        => BestExecutionPlanner.Plan(side, requestedBtc, venues);
-
-    public BestExecutionPlan PlanFromDirectory(string venuesDir, OrderSide side, decimal requestedBtc)
+    public async Task<BestExecutionPlan> PlanFromFileAsync(string venueFilePath, OrderSide side, decimal amount, CancellationToken cancellationToken = default)
     {
-        if (!Directory.Exists(venuesDir))
+        if (!File.Exists(venueFilePath))
         {
-            throw new DirectoryNotFoundException(venuesDir);
-        }
-        var files = Directory
-            .EnumerateFiles(venuesDir)
-            .OrderBy(f => f, StringComparer.OrdinalIgnoreCase);
-
-        var snapshots = new List<VenueSnapshot>();
-
-        foreach (var file in files)
-        {
-            var id = Path.GetFileNameWithoutExtension(file);
-            var src = new FileMarketDataSource(file);
-            var book = src.ReadSnapshots(maxLines: 1).FirstOrDefault();
-            if (book is null)
-            {
-                continue;
-            }
-
-            snapshots.Add(new VenueSnapshot(
-                venueId: id,
-                book: book,
-                balances: new VenueBalances(DefaultEur, DefaultBtc)));
+            throw new FileNotFoundException("Venue file not found.", venueFilePath);
         }
 
-        return Plan(side, requestedBtc, snapshots);
+        var parsedSnapshots = await OrderBookFileReader.ReadSnapshotsAsync(venueFilePath, cancellationToken);
+
+        var snapshots = parsedSnapshots
+            .Select((parsed, index) => new VenueSnapshot(
+                venueId: $"Venue-{index + 1}",
+                book: parsed.Snapshot,
+                balances: parsed.Balances))
+            .ToArray();
+
+        return await PlanAsync(side, amount, snapshots);
     }
 }

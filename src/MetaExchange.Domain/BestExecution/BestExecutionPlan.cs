@@ -6,24 +6,24 @@ namespace MetaExchange.Domain.BestExecution;
 public sealed record BestExecutionPlan
 {
     public OrderSide Side { get; }
-    public decimal RequestedBtc { get; }
-    public decimal FilledBtc { get; }
+    public decimal Amount { get; }
+    public decimal FilledAmount { get; }
     public decimal TotalEur { get; }
     public IReadOnlyList<ChildOrder> Orders { get; }
 
-    public BestExecutionPlan(OrderSide side, decimal requestedBtc, decimal filledBtc, decimal totalEur, IReadOnlyList<ChildOrder> orders)
+    public BestExecutionPlan(OrderSide side, decimal amount, decimal filledAmount, decimal totalEur, IReadOnlyList<ChildOrder> orders)
     {
-        if (requestedBtc < 0m)
+        if (amount < 0m)
         {
-            throw new ArgumentOutOfRangeException(nameof(requestedBtc), "RequestedBtc must be non-negative");
+            throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be non-negative");
         }
-        if (filledBtc < 0m)
+        if (filledAmount < 0m)
         {
-            throw new ArgumentOutOfRangeException(nameof(filledBtc), "FilledBtc must be non-negative");
+            throw new ArgumentOutOfRangeException(nameof(filledAmount), "FilledAmount must be non-negative");
         }
-        if (filledBtc > requestedBtc)
+        if (filledAmount > amount)
         {
-            throw new ArgumentException("FilledBtc cannot exceed RequestedBtc", nameof(filledBtc));
+            throw new ArgumentException("FilledAmount cannot exceed Amount", nameof(filledAmount));
         }
         if (totalEur < 0m)
         {
@@ -37,8 +37,8 @@ public sealed record BestExecutionPlan
         }
 
         Side = side;
-        RequestedBtc = requestedBtc;
-        FilledBtc = filledBtc;
+        Amount = amount;
+        FilledAmount = filledAmount;
         TotalEur = totalEur;
     }
 }

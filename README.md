@@ -16,14 +16,13 @@ A single snapshot looks like the examples included in the `data` folder.
 
 ## Console application
 
-The console application is a simple entry point that reads the order books from a directory and prints a plan to stdout.
-Every file is considered as a separate venue.
+The console application is a simple entry point that reads the order books from a file and prints a plan to stdout.
 
 ### Build & run
 
 ```powershell
 # from the repo root
-dotnet run --project MetaExchange.Console.csproj -- <venuesDir> [requestedBtc] [side]
+dotnet run --project MetaExchange.Console.csproj -- <venueFile> [requestedamountBtc] [side]
 ```
 
 Example:
@@ -32,7 +31,7 @@ Example:
 dotnet run --project .\src\MetaExchange.Console\MetaExchange.Console.csproj -- .\data\venues 0.9 Buy
 ```
 
-If `requestedBtc` or `side` are omitted, the defaults are `0.9` and `Buy`.
+If `amount` or `side` are omitted, the defaults are `0.9` and `Buy`.
 
 ### Sample output
 
@@ -57,8 +56,8 @@ The API is located in `src/MetaExchange.Api` and listens on port **8080** by def
 
 ```powershell
 cd src/MetaExchange.Api
-# configure environment variable point at your venues directory
-$env:VenuesDirectory = "..\\..\\data\\venues"
+# configure environment variable point at your venues file
+$env:VenuesDirectory = "..\\..\\data\\venues\\order_books_data1"
 dotnet run
 ```
 
@@ -71,7 +70,7 @@ Body example:
 ```json
 {
   "side": "Buy",
-  "requestedBtc": 1.2
+  "amount": 1.2
 }
 ```
 
@@ -80,7 +79,7 @@ Response:
 ```json
 {
   "side": "Buy",
-  "requestedBtc": 1.2,
+  "amount": 1.2,
   "filledBtc": 1.2,
   "totalEur": 36000.0,
   "orders": [

@@ -1,19 +1,19 @@
+using MetaExchange.Domain.Venues;
+
 namespace MetaExchange.Domain.OrderBooks;
 
 public sealed record OrderBookSnapshot
 {
-    public decimal UnixTimeSeconds { get; }
+    public VenueBalances VenueBalances { get; }
     public DateTime AcqTime { get; }
 
     public IReadOnlyList<PriceLevel> Bids { get; }
     public IReadOnlyList<PriceLevel> Asks { get; }
 
-    public OrderBookSnapshot(decimal unixTimeSeconds, DateTime acqTime, IReadOnlyList<PriceLevel> bids, IReadOnlyList<PriceLevel> asks)
+    public OrderBookSnapshot(VenueBalances venueBalances, DateTime acqTime, IReadOnlyList<PriceLevel> bids, IReadOnlyList<PriceLevel> asks)
     {
-        if (unixTimeSeconds < 0)
-        {
-            throw new ArgumentException("UnixTimeSeconds must be non-negative", nameof(unixTimeSeconds));
-        }
+        ArgumentNullException.ThrowIfNull(venueBalances);
+
         if (acqTime < DateTime.UnixEpoch)
         {
             throw new ArgumentException("AcqTime must be non-negative", nameof(acqTime));
@@ -31,7 +31,7 @@ public sealed record OrderBookSnapshot
             throw new ArgumentException("Asks list must not contain null", nameof(asks));
         }
 
-        UnixTimeSeconds = unixTimeSeconds;
+        VenueBalances = venueBalances;
         AcqTime = acqTime;
     }
 }

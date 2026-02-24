@@ -9,12 +9,30 @@
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/MetaExchange.Console/MetaExchange.Console.csproj",
+            "args": [
+                "${workspaceFolder}/data/venues/order_books_data1"
+            ],
+            "cwd": "${workspaceFolder}"
         },
         {
             "name": "C#: MetaExchange.Console Debug (Prompt args)",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/MetaExchange.Console/MetaExchange.Console.csproj",
+            "args": [
+                "${input:orderBookPath}"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "C#: MetaExchange.API Debug (Local venues)",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/MetaExchange.Api/MetaExchange.Api.csproj",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     ],
     "inputs": [
@@ -22,7 +40,7 @@
             "id": "orderBookPath",
             "type": "promptString",
             "description": "Path to order book file",
-            "default": ".\\data\\venues"
+            "default": "${workspaceFolder}/data/venues/order_books_data1"
         }
     ]
 }

@@ -12,9 +12,9 @@ public sealed class FileMarketDataSource : IMarketDataSource
         _filePath = filePath;
     }
 
-    public IEnumerable<OrderBookSnapshot> ReadSnapshots(int? maxLines = null)
+    public IEnumerable<OrderBookSnapshot> ReadSnapshots()
     {
-        foreach (var parsed in OrderBookFileReader.ReadSnapshots(_filePath, maxLines))
+        foreach (var parsed in OrderBookFileReader.ReadSnapshots(_filePath))
         {
             yield return parsed.Snapshot;
         }

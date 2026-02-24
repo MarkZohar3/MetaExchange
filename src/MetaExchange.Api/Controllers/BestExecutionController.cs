@@ -15,26 +15,26 @@ namespace MetaExchange.Api.Controllers;
 public sealed class BestExecutionController : ControllerBase
 {
     private readonly IBestExecutionService _service;
-    private readonly string _venuesDir;
+    private readonly string _venueFilePath;
 
     public BestExecutionController(IBestExecutionService service, IOptions<VenuesOptions> options)
     {
         _service = service;
 
-        var venuesDir = options?.Value?.VenuesDirectory;
-        _venuesDir = venuesDir
-            ?? throw new InvalidOperationException("VenuesDirectory configuration is required.");
+        var venueFilePath = options?.Value?.VenueFilePath;
+        _venueFilePath = venueFilePath
+            ?? throw new InvalidOperationException("VenueFilePath configuration is required.");
     }
 
     [HttpPost("plan")]
     [ProducesResponseType(typeof(BestExecutionResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadRequest), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public ActionResult<BestExecutionResponseDto> Plan([FromBody] BestExecutionRequestDto req)
+    public async Task<ActionResult<BestExecutionResponseDto>> Plan([FromBody] BestExecutionRequestDto req)
     {
-        if (req.RequestedBtc <= 0m)
+        if (req.Amount <= 0m)
         {
-            return BadRequest(new { error = "RequestedBtc must be > 0." });
+            return BadRequest(new { error = "Amount must be > 0." });
         }
 
         OrderSide side;
@@ -50,11 +50,11 @@ public sealed class BestExecutionController : ControllerBase
         BestExecutionPlan plan;
         try
         {
-            plan = _service.PlanFromDirectory(_venuesDir, side, req.RequestedBtc);
+            plan = await _service.PlanFromFileAsync(_venueFilePath, side, req.Amount, HttpContext.RequestAborted);
         }
-        catch (DirectoryNotFoundException)
+        catch (FileNotFoundException)
         {
-            return Problem(detail: $"Venue directory not found: {_venuesDir}", statusCode:500);
+            return Problem(detail: $"Venue file not found: {_venueFilePath}", statusCode:500);
         }
 
         return Ok(plan.ToDto());
