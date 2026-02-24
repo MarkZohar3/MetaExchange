@@ -27,7 +27,9 @@ public sealed class BestExecutionController : ControllerBase
     public ActionResult<BestExecutionResponseDto> Plan([FromBody] BestExecutionRequestDto req)
     {
         if (req.RequestedBtc <= 0m)
+        {
             return BadRequest(new { error = "RequestedBtc must be > 0." });
+        }
 
         OrderSide side;
         try

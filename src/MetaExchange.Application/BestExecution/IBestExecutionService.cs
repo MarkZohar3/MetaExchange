@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using MetaExchange.Domain.Orders;
 
 namespace MetaExchange.Application.BestExecution;

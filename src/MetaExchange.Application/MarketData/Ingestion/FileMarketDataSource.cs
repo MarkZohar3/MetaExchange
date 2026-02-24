@@ -15,6 +15,8 @@ public sealed class FileMarketDataSource : IMarketDataSource
     public IEnumerable<OrderBookSnapshot> ReadSnapshots(int? maxLines = null)
     {
         foreach (var parsed in OrderBookFileReader.ReadSnapshots(_filePath, maxLines))
+        {
             yield return parsed.Snapshot;
+        }
     }
 }
